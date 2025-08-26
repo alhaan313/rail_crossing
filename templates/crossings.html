@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Crossings – RailGate Vaniyambadi{% endblock %}
+
+{% block content %}
+<section class="hero hero-compact">
+  <div class="hero-title"><span class="pulse-dot"></span> Nearby Road Crossings</div>
+  <div class="muted">Closest to {{ station.name }} station. Tap Directions for turn-by-turn.</div>
+</section>
+
+{% if crossings %}
+  <ul class="xlist">
+    {% for c in crossings %}
+      <li class="xitem">
+        <div class="xinfo">
+          <div class="xname">{{ c.label }}</div>
+          <div class="xsub muted">
+            {% if c.road %}Road: <strong>{{ c.road }}</strong>{% endif %}
+            {% if c.place %}{% if c.road %} • {% endif %}Near <strong>{{ c.place }}</strong>{% endif %}
+            {% if not c.road and not c.place %}Location near Vaniyambadi{% endif %}
+          </div>
+          <div class="xdist">≈ {{ '%.1f'|format(c.distance_km) }} km from station</div>
+        </div>
+        <div class="xactions">
+          <a class="btn-primary" target="_blank" rel="noreferrer"
+             href="https://www.google.com/maps/dir/?api=1&destination={{ c.lat }},{{ c.lon }}">Directions</a>
+          <a class="btn" target="_blank" rel="noreferrer"
+             href="https://www.openstreetmap.org/?mlat={{ c.lat }}&mlon={{ c.lon }}#map=18/{{ c.lat }}/{{ c.lon }}">OSM</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if total > showing %}
+    {% if show_all %}
+      <div class="center"><a class="btn" href="{{ url_for('crossings') }}">Show top 5 only</a></div>
+    {% else %}
+      <div class="center"><a class="btn" href="{{ url_for('crossings', all=1) }}">Show all {{ total }} crossings</a></div>
+    {% endif %}
+  {% endif %}
+{% else %}
+  <div class="card">No crossings found right now.</div>
+{% endif %}
+{% endblock %}

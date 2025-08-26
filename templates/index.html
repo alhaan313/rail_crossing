@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Trains – RailGate Vaniyambadi{% endblock %}
+
+{% block content %}
+<section class="hero hero-grand {% if next_train %}has-next{% endif %}">
+  {% if next_train %}
+    <div class="hero-info" id="hero" data-eta="{{ next_train.eta_at_crossing.isoformat() }}">
+      <div class="hero-title">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        Next Train
+      </div>
+      <div class="hero-train">
+        <div class="train-no">#{{ next_train.train_no }}</div>
+        <div class="train-name">{{ next_train.name }}</div>
+      </div>
+      <div class="hero-time big-eta">
+        ETA: <strong>{{ next_train.eta_at_crossing.strftime("%I:%M %p") }}</strong>
+      </div>
+      <div class="hero-status">
+        <span id="gate-status" class="chip chip-open">✅ Gate Open</span>
+        <span class="muted">Arrives in</span>
+        <span id="countdown" class="countdown">--:--</span>
+        <span id="countdown-aria" class="sr-only" aria-live="polite"></span>
+      </div>
+    </div>
+  {% else %}
+    <div class="hero-info">
+      <div class="hero-title"><span class="pulse-dot"></span> Next Train</div>
+      <div class="muted">No trains found right now.</div>
+    </div>
+  {% endif %}
+</section>
+
+<section>
+  <h2 class="section-title">Upcoming Trains</h2>
+
+  <div class="cards">
+    {% for t in trains %}
+      <article class="card" data-eta="{{ t.eta_at_crossing.isoformat() }}">
+        <div class="card-head">
+          <div class="train">
+            <div class="train-no">#{{ t.train_no }}</div>
+            <div class="train-name">{{ t.name }}</div>
+          </div>
+          <div class="tag">{{ t.source }}</div>
+        </div>
+        <div class="card-row"><span class="muted">ETA</span><strong>{{ t.eta_at_crossing.strftime("%I:%M %p") }}</strong></div>
+        <div class="card-row"><span class="muted">In</span><strong class="rel" data-rel>--</strong></div>
+      </article>
+    {% endfor %}
+    {% if not trains %}<article class="card">No upcoming trains on this page.</article>{% endif %}
+  </div>
+
+  <div class="table-wrap">
+    <table aria-label="Upcoming trains">
+      <thead><tr><th>Train No</th><th>Name</th><th>ETA at Crossing</th><th>In</th><th>Source</th></tr></thead>
+      <tbody>
+        {% for t in trains %}
+          <tr data-eta="{{ t.eta_at_crossing.isoformat() }}">
+            <td>#{{ t.train_no }}</td>
+            <td>{{ t.name }}</td>
+            <td>{{ t.eta_at_crossing.strftime("%I:%M %p") }}</td>
+            <td class="rel" data-rel>--</td>
+            <td>{{ t.source }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="pagination" aria-label="Pagination">
+    {% if page > 1 %}<a class="page-btn" href="{{ url_for('trains', page=page-1) }}">Prev</a>{% else %}<span class="page-btn disabled">Prev</span>{% endif %}
+    {% for p in pages %}
+      {% if p == "..." %}<span class="ellipsis">…</span>
+      {% elif p == page %}<span class="page-btn current">{{ p }}</span>
+      {% else %}<a class="page-btn" href="{{ url_for('trains', page=p) }}">{{ p }}</a>{% endif %}
+    {% endfor %}
+    {% if page < total_pages %}<a class="page-btn" href="{{ url_for('trains', page=page+1) }}">Next</a>{% else %}<span class="page-btn disabled">Next</span>{% endif %}
+  </nav>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    initHeroCountdown({ preCloseSec: 120, enableSticky: true });
+    initRelativeTimes();
+  });
+</script>
+{% endblock %}

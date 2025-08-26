@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Help – RailGate Vaniyambadi{% endblock %}
+
+{% block content %}
+<section class="hero hero-compact">
+  <div class="hero-title"><span class="pulse-dot"></span> Help & Tips</div>
+  <div class="muted">Quick guide to use RailGate safely and easily.</div>
+</section>
+
+<div class="grid3">
+  <div class="card">
+    <h3 class="card-title">Understand the status</h3>
+    <ul class="list">
+      <li>✅ Gate Open — Road is open.</li>
+      <li>⚠️ Closing Soon — Train is near. Slow down.</li>
+      <li>🚧 Gate Closed — Please wait till it opens.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Mobile tips</h3>
+    <ul class="list">
+      <li>Use A+ / A- (top-right) to change text size.</li>
+      <li>Use the big buttons at the bottom to switch pages.</li>
+      <li>On Crossings, tap Directions for quick navigation.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Safety</h3>
+    <ul class="list">
+      <li>Never cross when the gate is closing or closed.</li>
+      <li>Watch for a second train on another track.</li>
+      <li>Emergency helpline (Railways): 139</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3 class="card-title">Why times can differ</h3>
+  <p class="muted">Times are estimates from public sources. Trains may be early/late. Always follow signals and staff.</p>
+</div>
+{% endblock %}

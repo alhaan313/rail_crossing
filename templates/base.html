@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}RailGate – Vaniyambadi Gate Times{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🚆</span>
+      <span class="brand-text">RailGate – Vaniyambadi</span>
+      <span class="live-badge" title="Live"><span class="dot"></span> Live</span>
+    </div>
+    <div class="actions">
+      <button id="dec-font" class="btn txt" aria-label="Reduce text size">A-</button>
+      <button id="inc-font" class="btn txt" aria-label="Increase text size">A+</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Main">
+    <a href="{{ url_for('trains') }}" class="tab {% if request.endpoint == 'trains' %}active{% endif %}">Trains</a>
+    <a href="{{ url_for('crossings') }}" class="tab {% if request.endpoint == 'crossings' %}active{% endif %}">Crossings</a>
+    <a href="{{ url_for('help_page') }}" class="tab {% if request.endpoint == 'help_page' %}active{% endif %}">Help</a>
+  </nav>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Sticky summary bar (shows next train countdown + progress) -->
+  <div class="sticky-now" id="stickyNow" hidden>
+    <div class="sticky-row">
+      <span class="sticky-title">Next train in</span>
+      <span class="sticky-count" id="stickyCountdown">--:--</span>
+    </div>
+    <div class="sticky-progress">
+      <div class="sticky-progress-inner" id="stickyProgress" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- Floating glassy oval nav -->
+  <nav class="fab-nav" aria-label="Quick navigation">
+    <a href="{{ url_for('trains') }}" class="fab-btn {% if request.endpoint == 'trains' %}active{% endif %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4h10a3 3 0 0 1 3 3v6a4 4 0 0 1-4 4l2 2h-2l-2-2H10l-2 2H6l2-2a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3m1 2a1 1 0 0 0-1 1v5h10V7a1 1 0 0 0-1-1H8m-1 9h10a2 2 0 0 0 2-2H5a2 2 0 0 0 2 2m2.5-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+      <span>Trains</span>
+    </a>
+    <a href="{{ url_for('crossings') }}" class="fab-btn {% if request.endpoint == 'crossings' %}active{% endif %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 18h16v2H4v-2m1-6h2l1-2h2l1 2h2l1-2h2l1 2h2v2H5v-2m3-8h8a2 2 0 0 1 2 2v2H6V6a2 2 0 0 1 2-2z"/></svg>
+      <span>Crossings</span>
+    </a>
+    <a href="{{ url_for('help_page') }}" class="fab-btn {% if request.endpoint == 'help_page' %}active{% endif %}">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 18h4v-2h-4v2m2-16A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 4a4 4 0 0 1 4 4c0 2-2 2.5-2 4h-2c0-2 2-2 2-4a2 2 0 1 0-4 0H8a4 4 0 0 1 4-4z"/></svg>
+      <span>Help</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    For safety, always follow signals and staff. Times are indicative.
+  </footer>
+
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
