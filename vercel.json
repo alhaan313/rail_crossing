@@ -1,14 +1,14 @@
 {
   "builds": [
     {
-      "src": "railway_app_v2/web_app/app.py",
+      "src": "rail_crossing/app.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "railway_app_v2/web_app/app.py"
+      "dest": "rail_crossing/app.py"
     }
   ]
 }
