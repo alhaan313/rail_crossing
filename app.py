@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, url_for, redirect
 from railway_app_v2.fetchers.erail import ErailFetcher
 from railway_app_v2.fetchers.overpass import OverpassFetcher
 
-app = Flask(__name__, static_folder='../static', template_folder='../templates')
+app = Flask(__name__, static_folder='static', template_folder='templates')
 logging.basicConfig(level=logging.INFO)
 
 PAGE_SIZE = 10
