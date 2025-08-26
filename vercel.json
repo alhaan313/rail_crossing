@@ -1,10 +1,14 @@
 {
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.9"
+  "builds": [
+    {
+      "src": "railway_app_v2/web_app/app.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
-    { "src": "/(.*)", "dest": "api/index.py" }
+    {
+      "src": "/(.*)",
+      "dest": "railway_app_v2/web_app/app.py"
+    }
   ]
 }
