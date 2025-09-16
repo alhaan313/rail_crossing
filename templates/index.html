@@ -17,7 +17,7 @@
         ETA: <strong>{{ next_train.eta_at_crossing.strftime("%I:%M %p") }}</strong>
       </div>
       <div class="hero-status">
-        <span id="gate-status" class="chip chip-open">✅ Gate Open</span>
+        <span id="gate-status" class="chip chip-open">Gate Open</span>
         <span class="muted">Arrives in</span>
         <span id="countdown" class="countdown">--:--</span>
         <span id="countdown-aria" class="sr-only" aria-live="polite"></span>
@@ -32,7 +32,21 @@
 </section>
 
 <section>
-  <h2 class="section-title">Upcoming Trains</h2>
+  <div class="section-header">
+    <h2 class="section-title">Upcoming Trains</h2>
+    <div class="refresh-controls">
+      <button id="manual-refresh-btn" onclick="manualRefresh()" class="refresh-btn">🔄 Refresh Now</button>
+      <button id="auto-refresh-toggle" onclick="toggleAutoRefresh()" class="refresh-btn">Enable Auto-refresh</button>
+      <select id="refresh-interval" onchange="changeRefreshInterval(this.value)" class="refresh-select">
+        <option value="10">Every 10s</option>
+        <option value="30" selected>Every 30s</option>
+        <option value="60">Every 1m</option>
+        <option value="120">Every 2m</option>
+        <option value="300">Every 5m</option>
+      </select>
+    </div>
+  </div>
+  <div id="last-refresh" class="last-refresh-indicator">Last updated: --</div>
 
   <div class="cards">
     {% for t in trains %}

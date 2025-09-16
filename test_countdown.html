@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown Format Test</title>
+    <style>
+        body { font-family: system-ui; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; background: #f8fafc; border-radius: 8px; }
+        .countdown { font-weight: 900; font-size: 24px; color: #1e40af; }
+    </style>
+</head>
+<body>
+    <h1>Countdown Format Test</h1>
+    <div class="test">
+        <strong>30 seconds:</strong>
+        <div class="countdown" id="test1"></div>
+    </div>
+    <div class="test">
+        <strong>2 minutes 30 seconds:</strong>
+        <div class="countdown" id="test2"></div>
+    </div>
+    <div class="test">
+        <strong>1 hour 15 minutes:</strong>
+        <div class="countdown" id="test3"></div>
+    </div>
+    <div class="test">
+        <strong>2 hours 45 minutes:</strong>
+        <div class="countdown" id="test4"></div>
+    </div>
+
+    <script>
+        function fmtCountdown(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            
+            if (totalSeconds < 60) {
+                return totalSeconds === 1 ? '1 sec' : `${totalSeconds} secs`;
+            }
+            
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            if (totalMinutes < 60) {
+                if (seconds === 0) {
+                    return totalMinutes === 1 ? '1 min' : `${totalMinutes} mins`;
+                }
+                const minText = totalMinutes === 1 ? '1 min' : `${totalMinutes} mins`;
+                const secText = seconds === 1 ? '1 sec' : `${seconds} secs`;
+                return `${minText}, ${secText}`;
+            }
+            
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            
+            if (minutes === 0) {
+                return hours === 1 ? '1 hr' : `${hours} hrs`;
+            }
+            
+            const hourText = hours === 1 ? '1 hr' : `${hours} hrs`;
+            const minText = minutes === 1 ? '1 min' : `${minutes} mins`;
+            return `${hourText}, ${minText}`;
+        }
+
+        // Test different time formats
+        document.getElementById('test1').textContent = fmtCountdown(30 * 1000);
+        document.getElementById('test2').textContent = fmtCountdown((2 * 60 + 30) * 1000);
+        document.getElementById('test3').textContent = fmtCountdown((1 * 60 * 60 + 15 * 60) * 1000);
+        document.getElementById('test4').textContent = fmtCountdown((2 * 60 * 60 + 45 * 60) * 1000);
+
+        console.log('✅ Countdown formatting test complete');
+    </script>
+</body>
+</html>

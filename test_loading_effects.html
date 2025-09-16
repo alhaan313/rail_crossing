@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading Effects Test</title>
+    <style>
+        body { 
+            font-family: system-ui; 
+            padding: 20px; 
+            background: linear-gradient(180deg, #fff, #fafcff);
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .countdown { 
+            font-weight: 900; 
+            font-size: 24px; 
+            letter-spacing: 1px; 
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .rel {
+            font-weight: 600;
+            color: #1e40af;
+        }
+        
+        /* Stylish loading animations */
+        @keyframes gradient-wave {
+            0% { 
+                background-position: -100% 0; 
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% { 
+                background-position: 200% 0; 
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 0 rgba(37, 99, 235, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 8px rgba(37, 99, 235, 0.6);
+            }
+        }
+
+        @keyframes text-fade {
+            0% { opacity: 1; }
+            30% { opacity: 0.3; }
+            70% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rel.loading, .countdown.loading {
+            position: relative;
+            background: linear-gradient(
+                90deg,
+                rgba(248, 250, 252, 0.8) 0%,
+                rgba(219, 234, 254, 0.9) 25%,
+                rgba(37, 99, 235, 0.1) 50%,
+                rgba(219, 234, 254, 0.9) 75%,
+                rgba(248, 250, 252, 0.8) 100%
+            );
+            background-size: 200% 100%;
+            animation: 
+                gradient-wave 2s ease-in-out infinite,
+                pulse-glow 2s ease-in-out infinite,
+                text-fade 2s ease-in-out infinite;
+            color: rgba(37, 99, 235, 0.3) !important;
+            border-radius: 8px;
+            padding: 4px 8px;
+            min-width: 80px;
+            min-height: 1.4em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .rel.loading::before {
+            content: '⏳';
+            position: absolute;
+            left: 2px;
+            font-size: 12px;
+            animation: spin 2s linear infinite;
+        }
+
+        .countdown.loading {
+            min-width: 140px;
+            min-height: 2em;
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-size: 18px;
+        }
+
+        .countdown.loading::before {
+            content: '🔄';
+            position: absolute;
+            left: 6px;
+            font-size: 16px;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .card.updating {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .hero-status.updating .countdown {
+            animation: pulse-countdown 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-countdown {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .test-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+        
+        .test-btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .train-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔄 Loading Effects Demo</h1>
+    
+    <div class="demo-section">
+        <h2>Hero Countdown Loading</h2>
+        <div class="hero-status" id="hero-section">
+            <span>Gate Open - Arrives in</span>
+            <div class="countdown" id="main-countdown">2 hrs, 14 mins</div>
+        </div>
+        <button class="test-btn" onclick="testHeroLoading()">Test Hero Loading</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2>Train Cards "Arrives In" Loading</h2>
+        <div class="card">
+            <div class="train-info">
+                <strong>#16090 YELAGIRI EXP</strong>
+                <span>erail</span>
+            </div>
+            <div>ETA: <strong>05:16 AM</strong></div>
+            <div>In: <strong class="rel" id="rel1">2 hours and 14 minutes</strong></div>
+        </div>
+        <div class="card">
+            <div class="train-info">
+                <strong>#12640 BRINDAVAN EX</strong>
+                <span>erail</span>
+            </div>
+            <div>ETA: <strong>06:30 AM</strong></div>
+            <div>In: <strong class="rel" id="rel2">3 hours and 28 minutes</strong></div>
+        </div>
+        <button class="test-btn" onclick="testCardLoading()">Test Card Loading</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2>Combined Refresh Effect</h2>
+        <p>This simulates what happens when you click the refresh button:</p>
+        <button class="test-btn" onclick="testFullRefresh()">🔄 Simulate Full Refresh</button>
+    </div>
+
+    <script>
+        function testHeroLoading() {
+            const heroSection = document.getElementById('hero-section');
+            const countdown = document.getElementById('main-countdown');
+            
+            // Add loading states
+            heroSection.classList.add('updating');
+            countdown.classList.add('loading');
+            
+            // Remove after delay
+            setTimeout(() => {
+                heroSection.classList.remove('updating');
+                countdown.classList.remove('loading');
+            }, 2000);
+        }
+        
+        function testCardLoading() {
+            const relElements = document.querySelectorAll('.rel');
+            const cards = document.querySelectorAll('.card');
+            
+            // Add stylish loading to all relative time elements
+            relElements.forEach(el => el.classList.add('loading'));
+            cards.forEach(card => card.classList.add('updating'));
+            
+            // Remove after delay
+            setTimeout(() => {
+                relElements.forEach(el => el.classList.remove('loading'));
+                cards.forEach(card => card.classList.remove('updating'));
+            }, 3000);
+        }
+        
+        function testFullRefresh() {
+            const heroSection = document.getElementById('hero-section');
+            const countdown = document.getElementById('main-countdown');
+            const relElements = document.querySelectorAll('.rel');
+            const cards = document.querySelectorAll('.card');
+            
+            // Add all stylish loading states
+            heroSection.classList.add('updating');
+            countdown.classList.add('loading');
+            relElements.forEach(el => el.classList.add('loading'));
+            cards.forEach(card => card.classList.add('updating'));
+            
+            // Remove after delay
+            setTimeout(() => {
+                heroSection.classList.remove('updating');
+                countdown.classList.remove('loading');
+                relElements.forEach(el => el.classList.remove('loading'));
+                cards.forEach(card => card.classList.remove('updating'));
+                
+                // Simulate updated times
+                countdown.textContent = '2 hrs, 13 mins';
+                document.getElementById('rel1').textContent = '2 hours and 13 minutes';
+                document.getElementById('rel2').textContent = '3 hours and 27 minutes';
+            }, 3500);
+        }
+        
+        console.log('🎨 Loading effects demo ready!');
+    </script>
+</body>
+</html>
