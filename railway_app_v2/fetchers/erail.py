@@ -3,6 +3,7 @@ import logging
 import requests
 from typing import List, Optional
 from datetime import timedelta, datetime
+import pytz
 
 from railway_app_v2.config import Config
 from railway_app_v2.models import TrainETA
@@ -121,7 +122,9 @@ class ErailFetcher(TrainDataFetcher):
         """ 
 
         trains: List[TrainETA] = []
-        base = datetime.now()
+        # Use Indian timezone for base time
+        ist = pytz.timezone('Asia/Kolkata')
+        base = datetime.now(ist)
 
         if not raw_text:
             logger.warning("Empty Erail response")
@@ -179,7 +182,8 @@ class ErailFetcher(TrainDataFetcher):
             eta_crossing = eta_station - minutes(int(round(offset_min)))
 
             # Filter out trains that have already passed or are too far in the future
-            now = datetime.now()
+            # Use Indian timezone for current time
+            now = datetime.now(pytz.timezone('Asia/Kolkata'))
             if eta_crossing < now:
                 logger.debug(f"Skipping train {train_no} - already passed (eta was {eta_crossing})")
                 continue

@@ -2,6 +2,7 @@ import math
 import logging
 from typing import Optional
 from datetime import datetime, timedelta
+import pytz
 
 from railway_app_v2.config import Config 
 
@@ -13,8 +14,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def now() -> datetime:
-    """Get current datetime."""
-    return datetime.now()
+    """Get current datetime in IST."""
+    return datetime.now(pytz.timezone('Asia/Kolkata'))
 
 def minutes(m: int) -> timedelta:
     """Convert minutes to timedelta."""
@@ -34,6 +35,7 @@ def parse_time_string(time_str: str, base: datetime) -> Optional[datetime]:
     """
     Parse a HH:MM string into a datetime object relative to base.
     Rolls over to the next day if the time has already passed today.
+    Ensures timezone awareness.
     """
     try:
         if not time_str or ":" not in time_str:
@@ -41,14 +43,15 @@ def parse_time_string(time_str: str, base: datetime) -> Optional[datetime]:
 
         hour, minute = map(int, time_str.split(":"))
 
-        # Build datetime with today's date
-        eta = datetime(
+        # Build datetime with today's date in IST
+        ist = pytz.timezone('Asia/Kolkata')
+        eta = ist.localize(datetime(
             year=base.year,
             month=base.month,
             day=base.day,
             hour=hour,
             minute=minute
-        )
+        ))
 
         # If that time has already passed today, assume it's tomorrow
         if eta < base:

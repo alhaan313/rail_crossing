@@ -1,5 +1,6 @@
 import logging, math, time, threading
 from datetime import datetime, timedelta
+import pytz
 from flask import Flask, render_template, request, url_for, redirect, jsonify
 
 from railway_app_v2.fetchers.erail import ErailFetcher
@@ -29,15 +30,17 @@ def is_cache_valid():
     if not TRAIN_DATA_CACHE['timestamp'] or not TRAIN_DATA_CACHE['data']:
         return False
     
-    cache_age = datetime.now() - TRAIN_DATA_CACHE['timestamp']
+    ist = pytz.timezone('Asia/Kolkata')
+    now = datetime.now(ist)
+    
+    cache_age = now - TRAIN_DATA_CACHE['timestamp']
     if cache_age.total_seconds() >= (TRAIN_DATA_CACHE['ttl_minutes'] * 60):
         return False
     
     # Invalidate cache if next train has passed
-    now = datetime.now()
     next_train = TRAIN_DATA_CACHE['data'][0] if TRAIN_DATA_CACHE['data'] else None
     if next_train and next_train.eta_at_crossing < now:
-        logging.info(f"Invalidating cache because next train {next_train.train_no} has passed")
+        logging.info(f"Invalidating cache because next train {next_train.train_no} has passed (ETA: {next_train.eta_at_crossing}, Now: {now})")
         return False
     
     return True
@@ -68,7 +71,7 @@ def fetch_fresh_train_data():
     
     # Update cache
     TRAIN_DATA_CACHE['data'] = all_trains
-    TRAIN_DATA_CACHE['timestamp'] = datetime.now()
+    TRAIN_DATA_CACHE['timestamp'] = datetime.now(pytz.timezone('Asia/Kolkata'))
     
     return all_trains
 
@@ -204,6 +207,7 @@ def api_trains():
             'next_train': next_train_data,
             'total_trains': len(all_trains),
             'timestamp': math.floor(time.time() * 1000),
+            'timezone': 'Asia/Kolkata',
             'cache_info': {
                 'cached': is_cache_valid(),
                 'age_seconds': round(cache_age_seconds, 1),
