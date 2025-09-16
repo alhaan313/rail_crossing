@@ -143,9 +143,11 @@
   let isAutoRefreshEnabled = false;
 
   function getRefreshSettings() {
+    // Default to enabled if not set
+    const autoRefreshSet = localStorage.getItem('rg_auto_refresh');
     return {
-      enabled: localStorage.getItem('rg_auto_refresh') === 'true',
-      interval: parseInt(localStorage.getItem('rg_refresh_interval') || '30')
+      enabled: autoRefreshSet === null ? true : autoRefreshSet === 'true',
+      interval: parseInt(localStorage.getItem('rg_refresh_interval') || '10')
     };
   }
 
@@ -421,5 +423,8 @@
     // Update UI
     updateRefreshUI();
     updateLastRefreshTime(null);
+    
+    // Fetch data immediately on page load
+    fetchTrainData();
   });
 })();
