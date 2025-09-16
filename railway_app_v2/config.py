@@ -31,8 +31,8 @@ class Config:
     
     # Polling configuration
     POLL_INTERVAL_SECS = 60
-    REQUEST_TIMEOUT = 15
-    MAX_RETRIES = 3
+    REQUEST_TIMEOUT = 30  # Increased timeout for slower connections
+    MAX_RETRIES = 5  # Increased retries
     
     @classmethod
     def validate(cls) -> bool:

@@ -17,6 +17,16 @@ class ErailFetcher(TrainDataFetcher):
     
     ERAIL_URL = "https://erail.in/rail/getTrains.aspx"
     
+    # Headers to make request look more like a browser
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "DNT": "1",
+        "Upgrade-Insecure-Requests": "1"
+    }
+    
     @staticmethod
     def _safe_get(lst, idx, default=""):
         return lst[idx] if idx < len(lst) else default
@@ -56,16 +66,32 @@ class ErailFetcher(TrainDataFetcher):
                 "Cache": "true"
             }
             
+            logger.info(f"Making request to Erail API with params: {params}")
             response = requests.get(
                 self.ERAIL_URL, 
                 params=params, 
+                headers=self.HEADERS,
                 timeout=Config.REQUEST_TIMEOUT
             )
+            logger.info(f"Erail API response status: {response.status_code}")
             response.raise_for_status()
-            return self._parse_erail_response(response.text, station_code, hours)
             
+            if not response.text:
+                logger.error("Erail API returned empty response")
+                return []
+                
+            trains = self._parse_erail_response(response.text, station_code, hours)
+            logger.info(f"Successfully parsed {len(trains)} trains from Erail response")
+            return trains
+            
+        except requests.Timeout:
+            logger.error(f"Timeout ({Config.REQUEST_TIMEOUT}s) while fetching from Erail")
+            return []
+        except requests.ConnectionError as e:
+            logger.error(f"Connection error while fetching from Erail: {e}")
+            return []
         except requests.RequestException as e:
-            logger.error(f"Failed to fetch from Erail: {e}")
+            logger.error(f"Failed to fetch from Erail: {type(e).__name__}: {e}")
             return []
     
     def _parse_erail_response(self, raw_text: str, station_code: str, hours: int) -> List[TrainETA]:
