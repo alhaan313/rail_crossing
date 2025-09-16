@@ -26,11 +26,21 @@ PAGE_SIZE = 10
 
 def is_cache_valid():
     """Check if cached data is still valid."""
-    if not TRAIN_DATA_CACHE['timestamp']:
+    if not TRAIN_DATA_CACHE['timestamp'] or not TRAIN_DATA_CACHE['data']:
         return False
     
     cache_age = datetime.now() - TRAIN_DATA_CACHE['timestamp']
-    return cache_age.total_seconds() < (TRAIN_DATA_CACHE['ttl_minutes'] * 60)
+    if cache_age.total_seconds() >= (TRAIN_DATA_CACHE['ttl_minutes'] * 60):
+        return False
+    
+    # Invalidate cache if next train has passed
+    now = datetime.now()
+    next_train = TRAIN_DATA_CACHE['data'][0] if TRAIN_DATA_CACHE['data'] else None
+    if next_train and next_train.eta_at_crossing < now:
+        logging.info(f"Invalidating cache because next train {next_train.train_no} has passed")
+        return False
+    
+    return True
 
 
 def record_user_activity():

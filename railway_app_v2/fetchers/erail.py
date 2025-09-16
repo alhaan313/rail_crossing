@@ -178,9 +178,15 @@ class ErailFetcher(TrainDataFetcher):
             # Round to nearest minute to avoid off-by-1 jitter
             eta_crossing = eta_station - minutes(int(round(offset_min)))
 
-            # Filter by the requested time window
-            # if not (base <= eta_crossing <= base + timedelta(hours=hours)):
-            #     continue        
+            # Filter out trains that have already passed or are too far in the future
+            now = datetime.now()
+            if eta_crossing < now:
+                logger.debug(f"Skipping train {train_no} - already passed (eta was {eta_crossing})")
+                continue
+            
+            if eta_crossing > now + timedelta(hours=hours):
+                logger.debug(f"Skipping train {train_no} - too far in future (eta {eta_crossing})")
+                continue
 
             trains.append(TrainETA(
                 train_no=train_no,
